@@ -6,8 +6,8 @@ project = 'geolocaltime'
 copyright = '2025, Geospatial AI'
 author = 'Jan Tschada'
 
-release = '0.1a'
-version = '0.1a'
+release = '0.1'
+version = '0.1'
 
 # -- General configuration
 
