@@ -5,6 +5,7 @@ from georapid.client import GeoRapidClient
 from georapid.factory import EnvironmentClientFactory
 from geolocaltime.services import enrich, convert, time_of_day
 from geolocaltime.types import OutputType
+from requests.exceptions import HTTPError
 
 import unittest
 
@@ -29,7 +30,14 @@ class TestGeoLocalTimeService(unittest.TestCase):
         self.assertEqual(len(result), len(self.latitudes))
 
     def test_time_of_day(self):
-        result = time_of_day(self.client, self.latitudes, self.longitudes, self.utc_times)
+        # Test with invalid utc times
+        with self.assertRaises(HTTPError) as context:
+            time_of_day(self.client, self.latitudes, self.longitudes, self.utc_times)
+        self.assertIn("Bad Request", str(context.exception))
+        
+        # Test with valid local times
+        local_times = convert(self.client, self.latitudes, self.longitudes, self.utc_times, OutputType.LOCAL)
+        result = time_of_day(self.client, self.latitudes, self.longitudes, local_times)
         self.assertIsInstance(result, list)
         self.assertEqual(len(result), len(self.latitudes))
 
