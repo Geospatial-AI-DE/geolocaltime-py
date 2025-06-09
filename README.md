@@ -54,7 +54,8 @@ enriched = enrich(client, latitudes, longitudes, OutputType.LOCAL)
 converted = convert(client, latitudes, longitudes, utc_times, OutputType.LOCAL)
 
 # Classify time of day
-time_classifications = time_of_day(client, latitudes, longitudes, utc_times)
+local_times = ['2025-06-09T21:58:01.010457+01:00', '2025-06-09T19:58:01.010457-01:00', '2025-06-09T20:58:01.010457+00:00']
+time_classifications = time_of_day(client, latitudes, longitudes, local_times)
 ```
 
 ## Documentation
