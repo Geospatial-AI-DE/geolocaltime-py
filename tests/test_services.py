@@ -24,14 +24,11 @@ class TestGeoLocalTimeService(unittest.TestCase):
         self.assertIsInstance(result, list)
         self.assertEqual(len(result), len(self.latitudes))
 
-        # Test direct enrichment to DTC
-        # TODO: Service throws bad request error, needs investigation
-        """
+        # Test direct enrichment to DTC        
         dtc_result = enrich(self.client, self.latitudes, self.longitudes, OutputType.DTC)
         self.assertIsInstance(dtc_result, list)
         self.assertEqual(len(dtc_result), len(self.latitudes))
         self.assertTrue(all(isinstance(item, str) for item in dtc_result))
-        """
 
     def test_convert(self):
         result = convert(self.client, self.latitudes, self.longitudes, self.utc_times, OutputType.LOCAL)
