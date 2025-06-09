@@ -84,10 +84,10 @@ Use the ``time_of_day`` function to classify times into descriptive periods:
    # Define coordinates and times
    latitudes = [50.0088, 39.437, 66.0557]
    longitudes = [8.2756, -31.542, -23.7033]
-   utc_times = ['2024-10-19T09:18:42.542819', '2024-10-19T15:30:00.000000', '2024-10-19T21:45:15.123456']
+   local_times = ['2025-06-09T21:58:01.010457+01:00', '2025-06-09T19:58:01.010457-01:00', '2025-06-09T20:58:01.010457+00:00']
 
    # Get time of day classifications
-   classifications = time_of_day(client, latitudes, longitudes, utc_times)
+   classifications = time_of_day(client, latitudes, longitudes, local_times)
    print(classifications)  # e.g., ['morning', 'afternoon', 'night']
 
 Batch Processing

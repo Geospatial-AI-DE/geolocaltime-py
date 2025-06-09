@@ -17,12 +17,21 @@ class TestGeoLocalTimeService(unittest.TestCase):
         self.client: GeoRapidClient = EnvironmentClientFactory.create_client_with_host(host)
         self.latitudes = [50.0088, 39.437, 66.0557, 71.0201, 39.6466, 37.0969, 70.4]
         self.longitudes = [8.2756, -31.542, -23.7033, 26.1334, 44.8109, 13.9381, -47.1]
-        self.utc_times = len(self.latitudes) * ['2024-10-19T09:18:42.542819']
+        self.utc_times = ['2024-10-19T09:18:42.542819', '2024-10-19T15:30:00.000000', '2024-10-19T21:45:15.123456']
 
     def test_enrich(self):
         result = enrich(self.client, self.latitudes, self.longitudes, OutputType.LOCAL)
         self.assertIsInstance(result, list)
         self.assertEqual(len(result), len(self.latitudes))
+
+        # Test direct enrichment to DTC
+        # TODO: Service throws bad request error, needs investigation
+        """
+        dtc_result = enrich(self.client, self.latitudes, self.longitudes, OutputType.DTC)
+        self.assertIsInstance(dtc_result, list)
+        self.assertEqual(len(dtc_result), len(self.latitudes))
+        self.assertTrue(all(isinstance(item, str) for item in dtc_result))
+        """
 
     def test_convert(self):
         result = convert(self.client, self.latitudes, self.longitudes, self.utc_times, OutputType.LOCAL)
