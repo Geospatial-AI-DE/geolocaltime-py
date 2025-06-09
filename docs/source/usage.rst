@@ -6,7 +6,7 @@ Usage
 Installation
 ------------
 
-To use geopedestrian, first install it using pip:
+To use geolocaltime, first install it using pip:
 
 .. code-block:: console
 
@@ -17,7 +17,7 @@ Creating clients
 To authorize against the endpoints being hosted on Rapid API you need to use your own Rapid API key.
 This geolocaltime module uses client instances from the georapid module.
 
-The ``host`` parameter must target the specific host like ``"geourban.p.rapidapi.com"``.
+The ``host`` parameter must target the specific host like ``"geolocaltime.p.rapidapi.com"``.
 Furthermore, the factory directly access ``os.environ['x_rapidapi_key']`` and uses the specified API key as a header parameter.
 Otherwise, :py:func:`georapid.factory.EnvironmentClientFactory.create_client_with_host` will raise a :exc:`ValueError`.
 
@@ -29,6 +29,97 @@ For example:
 >>> client: GeoRapidClient = EnvironmentClientFactory.create_client_with_host(host)
 
 For more details take a closer look at `Creating clients <https://georapid.readthedocs.io/en/latest/usage.html#creating-clients>`__.
+
+Using the API
+-------------
+
+The geolocaltime service provides three main functions for working with geospatial time data:
+
+Enriching Locations with Current Time
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Use the ``enrich`` function to get current local time for coordinates:
+
+.. code-block:: python
+
+   from geolocaltime.services import enrich
+   from geolocaltime.types import OutputType
+
+   # Define coordinates
+   latitudes = [50.0088, 39.437, 66.0557]
+   longitudes = [8.2756, -31.542, -23.7033]
+
+   # Get current local times
+   local_times = enrich(client, latitudes, longitudes, OutputType.LOCAL)
+   print(local_times)
+
+Converting UTC to Local Time
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Use the ``convert`` function to convert specific UTC times to local times:
+
+.. code-block:: python
+
+   from geolocaltime.services import convert
+   from geolocaltime.types import OutputType
+
+   # Define coordinates and UTC times
+   latitudes = [50.0088, 39.437, 66.0557]
+   longitudes = [8.2756, -31.542, -23.7033]
+   utc_times = ['2024-10-19T09:18:42.542819', '2024-10-19T15:30:00.000000', '2024-10-19T21:45:15.123456']
+
+   # Convert to local times
+   local_times = convert(client, latitudes, longitudes, utc_times, OutputType.LOCAL)
+   print(local_times)
+
+Classifying Time of Day
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Use the ``time_of_day`` function to classify times into descriptive periods:
+
+.. code-block:: python
+
+   from geolocaltime.services import time_of_day
+
+   # Define coordinates and times
+   latitudes = [50.0088, 39.437, 66.0557]
+   longitudes = [8.2756, -31.542, -23.7033]
+   utc_times = ['2024-10-19T09:18:42.542819', '2024-10-19T15:30:00.000000', '2024-10-19T21:45:15.123456']
+
+   # Get time of day classifications
+   classifications = time_of_day(client, latitudes, longitudes, utc_times)
+   print(classifications)  # e.g., ['morning', 'afternoon', 'night']
+
+Batch Processing
+~~~~~~~~~~~~~~~~
+
+All functions automatically handle large datasets by chunking requests into batches of 100 coordinates:
+
+.. code-block:: python
+
+   # Works seamlessly with large datasets
+   large_latitudes = [50.0] * 250   # 250 coordinates
+   large_longitudes = [8.0] * 250
+   large_times = ['2024-10-19T09:18:42.542819'] * 250
+
+   # Automatically chunked into 3 API requests (100 + 100 + 50)
+   results = enrich(client, large_latitudes, large_longitudes, OutputType.LOCAL)
+   print(f"Processed {len(results)} locations")
+
+Output Types
+~~~~~~~~~~~~
+
+The ``enrich`` and ``convert`` functions support different output formats:
+
+.. code-block:: python
+
+   from geolocaltime.types import OutputType
+
+   # Local time format (default)
+   local_times = enrich(client, latitudes, longitudes, OutputType.LOCAL)
+
+   # Date-time classification format
+   dtc_results = enrich(client, latitudes, longitudes, OutputType.DTC)
 
 Terms of use
 ------------
