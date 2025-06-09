@@ -29,6 +29,12 @@ class TestGeoLocalTimeService(unittest.TestCase):
         self.assertIsInstance(result, list)
         self.assertEqual(len(result), len(self.latitudes))
 
+        # Test direct conversion to DTC
+        dtc_result = convert(self.client, self.latitudes, self.longitudes, self.utc_times, OutputType.DTC)
+        self.assertIsInstance(dtc_result, list)
+        self.assertEqual(len(dtc_result), len(self.latitudes))
+        self.assertTrue(all(isinstance(item, str) for item in dtc_result))
+
     def test_time_of_day(self):
         # Test with invalid utc times
         with self.assertRaises(HTTPError) as context:
